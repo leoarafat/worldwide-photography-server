@@ -20,7 +20,7 @@ async function run(){
 
     try{
         const serviceCollection = client.db('photography').collection('photoService')
-        const reviewCollection = client.db('userReview').collection('review')
+        const reviewCollection = client.db('photography').collection('review')
         app.get('/service', async(req, res)=>{
             const query = {}
             const cursor = serviceCollection.find(query)
@@ -45,14 +45,40 @@ async function run(){
             const user = req.body 
             // console.log(user)
             const result = await reviewCollection.insertOne(user)
-            // console.log(result)
+            console.log(result)
             res.send(result)
 
         })
+
         app.get('/feedback', async(req, res)=>{
-            const query = {}
+            let query = {}
+            if(req.query.email){
+                query = {
+                    email: req.query.email
+                }
+            }
             const cursor = reviewCollection.find(query)
             const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.get('/feedback/:id', async(req, res)=>{
+
+            
+            
+            const id = req.params.id 
+            const query = {service: id}
+            const result =  reviewCollection.find(query)
+            const cursor = await result.toArray()
+
+            
+            res.send(cursor)
+        })
+
+        app.delete('/feedback/:id', async(req, res)=>{
+            const id = req.params.id
+            const query = {_id: ObjectId(id)}
+            const result = await reviewCollection.deleteOne(query)
             res.send(result)
         })
 
