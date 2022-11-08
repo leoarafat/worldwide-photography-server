@@ -20,6 +20,7 @@ async function run(){
 
     try{
         const serviceCollection = client.db('photography').collection('photoService')
+        const reviewCollection = client.db('userReview').collection('review')
         app.get('/service', async(req, res)=>{
             const query = {}
             const cursor = serviceCollection.find(query)
@@ -33,13 +34,22 @@ async function run(){
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/allServices/:id', async(req, res)=>{
+        app.get('/allService/:id', async(req, res)=>{
             const id = req.params.id 
             const query = {_id: ObjectId(id)}
             const result = await serviceCollection.findOne(query)
             res.send(result)
         })
 
+        app.post('/feedback', async(req, res)=>{
+            const user = req.body 
+            console.log(user)
+            
+            const result = await reviewCollection.insertOne(user)
+            console.log(result)
+            res.send(result)
+
+        })
 
     }
     catch(error){
