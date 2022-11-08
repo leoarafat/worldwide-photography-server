@@ -43,12 +43,17 @@ async function run(){
 
         app.post('/feedback', async(req, res)=>{
             const user = req.body 
-            console.log(user)
-            
+            // console.log(user)
             const result = await reviewCollection.insertOne(user)
-            console.log(result)
+            // console.log(result)
             res.send(result)
 
+        })
+        app.get('/feedback', async(req, res)=>{
+            const query = {}
+            const cursor = reviewCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
         })
 
     }
